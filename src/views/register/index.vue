@@ -67,24 +67,14 @@
       </div>
     </el-form>
 
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      冲鸭,以后可以用这些登录,然而目前并没有开发...
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
-
   </div>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate'
-import SocialSign from './components/SocialSignin'
 
 export default {
   name: 'Login',
-  components: { SocialSign },
   data: function() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {

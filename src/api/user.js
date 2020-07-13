@@ -12,14 +12,14 @@ export function getInfo(token) {
   debugger
   return request({
     url: '/api/user/info.do',
-    method: 'get',
+    method: 'post',
     params: { token }
   })
 }
 
 export function logout() {
   return request({
-    url: '/api/user/logout',
+    url: '/api/user/logout.do',
     method: 'post'
   })
 }
