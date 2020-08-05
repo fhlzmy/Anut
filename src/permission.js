@@ -8,7 +8,7 @@ import getPageTitle from '@/utils/get-page-title'
 
 NProgress.configure({ showSpinner: false }) // NProgress Configuration
 
-const whiteList = ['/login', '/auth-redirect'] // no redirect whitelist
+const whiteList = ['/login', '/auth-redirect', '/register'] // 不需要重定向的白名单
 
 router.beforeEach(async(to, from, next) => {
   // start progress bar
@@ -19,11 +19,14 @@ router.beforeEach(async(to, from, next) => {
 
   // determine whether the user has logged in
   const hasToken = getToken()
-
   if (hasToken) {
     if (to.path === '/login') {
       // if is logged in, redirect to the home page
       next({ path: '/' })
+      NProgress.done()
+    } else if (to.path === '/register') {
+      // if is logged in, redirect to the home page 如果是注册的请求,去吧去吧  送你去注册
+      next({ path: '/login' })
       NProgress.done()
     } else {
       // determine whether the user has obtained his permission roles through getInfo
@@ -60,6 +63,9 @@ router.beforeEach(async(to, from, next) => {
     if (whiteList.indexOf(to.path) !== -1) {
       // in the free login whitelist, go directly
       next()
+    } else if (to.path === '/register') {
+      next('/register')
+      NProgress.done()
     } else {
       // other pages that do not have permission to access are redirected to the login page.
       next(`/login?redirect=${to.path}`)

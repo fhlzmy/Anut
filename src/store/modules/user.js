@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, register } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -44,12 +44,26 @@ const actions = {
     })
   },
 
+  // 用户注册
+  register({ commit }, userInfo) {
+    debugger
+    const { account, password, username, sex } = userInfo
+    return new Promise((resolve, reject) => {
+      register({ account: account.trim(), password: password, userName: username, sex: sex }).then(response => {
+        const { data } = response
+        commit('SET_TOKEN', data.token)
+        setToken(data.token)
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
+    })
+  },
+
   // get user info
   getInfo({ commit, state }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-
-        debugger
         const { data } = response
 
         if (!data) {

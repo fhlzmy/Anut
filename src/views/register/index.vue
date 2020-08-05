@@ -1,24 +1,53 @@
 <template>
   <div class="login-container">
-    <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
+    <el-form ref="user" :model="user" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">这是一个很随便的登录页面</h3>
+        <h3 class="title">这是一个乱七八糟的注册页面</h3>
       </div>
 
-      <el-form-item prop="account">
+      <el-form-item prop="account" >
         <span class="svg-container">
           <svg-icon icon-class="user" />
         </span>
         <el-input
           ref="account"
-          v-model="loginForm.account"
-          placeholder="Account"
+          v-model="user.account"
+          placeholder="账号"
           name="account"
           type="text"
           tabindex="1"
           autocomplete="on"
         />
+      </el-form-item>
+
+      <el-form-item prop="username">
+        <span class="svg-container">
+          <svg-icon icon-class="user" />
+        </span>
+        <el-input
+          ref="username"
+          v-model="user.username"
+          placeholder="用户名"
+          name="account"
+          type="text"
+          tabindex="1"
+          autocomplete="on"
+        />
+      </el-form-item>
+
+      <el-form-item  style="text-align: center">
+        <el-tooltip placement="top">
+          <el-switch
+            v-model="user.sex"
+            active-color="#13ce66"
+            inactive-color="#ff4949"
+            active-value="1"
+            inactive-value="0"
+            active-text="男"
+            inactive-text="女">
+          </el-switch>
+        </el-tooltip>
       </el-form-item>
 
       <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
@@ -29,7 +58,7 @@
           <el-input
             :key="passwordType"
             ref="password"
-            v-model="loginForm.password"
+            v-model="user.password"
             :type="passwordType"
             placeholder="Password"
             name="password"
@@ -44,44 +73,20 @@
           </span>
         </el-form-item>
       </el-tooltip>
-
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
-
-      <el-button :loading="loading" type="success" style="width:100%;margin-bottom:30px;margin-left: 0px" @click.native.prevent="register">注册</el-button>
-
-      <el-button :loading="loading" type="warning" style="width:100%;margin-bottom:30px;margin-left: 0px" @click.native.prevent="forgetPassword">忘记密码?</el-button>
-
-      <div style="position:relative">
-        <div class="tips">
-          <span>用户名 : admin</span>
-          <span>密码 : any</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">用户名 : editor</span>
-          <span>密码 : any</span>
-        </div>
-
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          或者用这些登录...(以后再开发)
-        </el-button>
-      </div>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="register">提交</el-button>
     </el-form>
 
   </div>
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { isString } from '../../utils/validate'
 
 export default {
   name: 'Login',
   data: function() {
     const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct user name'))
-      } else {
-        callback()
-      }
+      callback()
     }
     const validatePassword = (rule, value, callback) => {
       if (value.length < 6) {
@@ -90,14 +95,24 @@ export default {
         callback()
       }
     }
+    const validateUserName = (rule, value, callback) => {
+      if (!isString(value)) {
+        callback(new Error('用户名是字符串!'))
+      } else {
+        callback()
+      }
+    }
     return {
-      loginForm: {
+      user: {
         account: 'admin',
-        password: '111111'
+        username: '超级管理员',
+        password: '111111',
+        sex: '1'
       },
       loginRules: {
         account: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        username: [{ required: true, trigger: 'blur', validator: validateUserName }]
       },
       passwordType: 'password',
       capsTooltip: false,
@@ -124,9 +139,9 @@ export default {
     // window.addEventListener('storage', this.afterQRScan)
   },
   mounted() {
-    if (this.loginForm.account === '') {
+    if (this.user.account === '') {
       this.$refs.account.focus()
-    } else if (this.loginForm.password === '') {
+    } else if (this.user.password === '') {
       this.$refs.password.focus()
     }
   },
@@ -156,11 +171,32 @@ export default {
         this.$refs.password.focus()
       })
     },
-    handleLogin() {
-      this.$refs.loginForm.validate(valid => {
+    getOtherQuery(query) {
+      return Object.keys(query).reduce((acc, cur) => {
+        if (cur !== 'redirect') {
+          acc[cur] = query[cur]
+        }
+        return acc
+      }, {})
+    },
+    forgetPassword() {
+      this.$notify({
+        title: '卧槽!',
+        message: '猪嘛,密码都能忘记！',
+        type: 'error'
+      })
+    },
+    register() {
+      debugger
+      this.$notify({
+        title: '冲!',
+        message: '注册去咯',
+        type: 'info'
+      })
+      this.$refs.user.validate(valid => {
         if (valid) {
           this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
+          this.$store.dispatch('user/register', this.user)
             .then(() => {
               this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
               this.loading = false
@@ -173,49 +209,7 @@ export default {
           return false
         }
       })
-    },
-    getOtherQuery(query) {
-      return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== 'redirect') {
-          acc[cur] = query[cur]
-        }
-        return acc
-      }, {})
-    },
-    register() {
-      this.$notify({
-        title: '冲鸭',
-        message: '现在出发去注册的页面~~~',
-        type: 'success'
-      })
-      // 跳转到注册页面
-      this.$router.push('@/views/login/components/Register')
-    },
-    forgetPassword() {
-      this.$notify({
-        title: '卧槽!',
-        message: '猪嘛,密码都能忘记！',
-        type: 'error'
-      })
     }
-    // afterQRScan() {
-    //   if (e.key === 'x-admin-oauth-code') {
-    //     const code = getQueryObject(e.newValue)
-    //     const codeMap = {
-    //       wechat: 'code',
-    //       tencent: 'code'
-    //     }
-    //     const type = codeMap[this.auth_type]
-    //     const codeName = code[type]
-    //     if (codeName) {
-    //       this.$store.dispatch('LoginByThirdparty', codeName).then(() => {
-    //         this.$router.push({ path: this.redirect || '/' })
-    //       })
-    //     } else {
-    //       alert('第三方登录失败')
-    //     }
-    //   }
-    // }
   }
 }
 </script>

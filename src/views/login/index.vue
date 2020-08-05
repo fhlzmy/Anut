@@ -198,8 +198,8 @@ export default {
         message: '现在出发去注册的页面~~~',
         type: 'success'
       })
-      // 跳转到注册页面
-      this.$router.push('@/views/login/components/Register')
+      // 跳转到注册页
+      this.$router.push('/register')
     },
     forgetPassword() {
       this.$notify({

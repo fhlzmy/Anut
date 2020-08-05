@@ -8,6 +8,14 @@ export function login(data) {
   })
 }
 
+export function register(data) {
+  return request({
+    url: '/api/user/register.do',
+    method: 'post',
+    data
+  })
+}
+
 export function getInfo(token) {
   debugger
   return request({
