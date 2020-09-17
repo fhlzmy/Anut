@@ -36,6 +36,24 @@
         />
       </el-form-item>
 
+      <el-form-item prop="username">
+        <span class="svg-container">
+            <svg-icon icon-class="password" />
+          </span>
+        <el-input
+          ref="username"
+          v-model="user.password"
+          placeholder="请输入密码"
+          name="password"
+          :type="passwordType"
+          tabindex="1"
+          autocomplete="on"
+        />
+        <span class="show-pwd" @click="showPwd">
+            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          </span>
+      </el-form-item>
+
       <el-form-item  style="text-align: center">
         <el-tooltip placement="top">
           <el-switch
@@ -50,29 +68,6 @@
         </el-tooltip>
       </el-form-item>
 
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="user.password"
-            :type="passwordType"
-            placeholder="Password"
-            name="password"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
-        </el-form-item>
-      </el-tooltip>
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="register">提交</el-button>
     </el-form>
 
@@ -104,9 +99,9 @@ export default {
     }
     return {
       user: {
-        account: 'admin',
+        account: 'fhl',
         username: '超级管理员',
-        password: '111111',
+        password: 'qwer123456',
         sex: '1'
       },
       loginRules: {
@@ -187,7 +182,6 @@ export default {
       })
     },
     register() {
-      debugger
       this.$notify({
         title: '冲!',
         message: '注册去咯',

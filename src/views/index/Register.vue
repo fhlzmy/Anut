@@ -8,7 +8,7 @@
         <el-input v-model="form.userName" autocomplete="off" />
       </el-form-item>
       <el-form-item label="密码">
-        <el-input v-model="form.password" show-password aria-placeholder="请输入密码" />
+        <el-input v-model="form.password" show-password aria-placeholder="请输入密码" :type="passwordType"/>
       </el-form-item>
     </el-form>
   </div>
